@@ -28,7 +28,7 @@ for line in lines:
             profit = {'cid': x, 'weightLimit': data.rstrip()}
             result['constraints'][x] = profit
             x += 1
-    else:
+    elif i > 2:
         datas = line.split(" ")
         result['varCon'][y] = {}
         x = 1
@@ -42,3 +42,4 @@ print(result)
 app_json = json.dumps(result)
 with open('DataSets/mknap1-2.json', 'w') as json_file:
     json.dump(result, json_file)
+
