@@ -9,15 +9,15 @@ y = 1
 for line in lines:
     if i == 0:
         data = line.split(" ")
-        result['variableNum'] = data[0]
-        result['constrainNum'] = data[1]
-        result['bestSolution'] = data[2].rstrip()
+        result['variableNum'] = int(data[0])
+        result['constrainNum'] = int(data[1])
+        result['bestSolution'] = float(data[2].rstrip())
     if i == 1:
         datas = line.split(" ")
         x = 1
         result['variables'] = {}
         for data in datas:
-            profit = {'vid': x, 'value': data.rstrip()}
+            profit = {'vid': x, 'value': float(data.rstrip())}
             result['variables'][x] = profit
             x += 1
     if i == 2:
@@ -25,7 +25,7 @@ for line in lines:
         x = 1
         result['constraints'] = {}
         for data in datas:
-            profit = {'cid': x, 'weightLimit': data.rstrip()}
+            profit = {'cid': x, 'weightLimit': float(data.rstrip())}
             result['constraints'][x] = profit
             x += 1
     elif i > 2:
@@ -33,7 +33,7 @@ for line in lines:
         result['varCon'][y] = {}
         x = 1
         for data in datas:
-            profit = {'vid': x, "cid": y, 'weight': data.rstrip()}
+            profit = {'vid': x, "cid": y, 'weight': int(data.rstrip())}
             result['varCon'][y][x] = profit
             x += 1
         y += 1
