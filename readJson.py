@@ -30,14 +30,14 @@ class UberParentGA:
         order_batches = {}
         for order in orders:
             order_batches[order] = {}
-            order_batches[order][0] = {'vid': 0, 'cid': 0, 'weight': 0, 'weightedProfit': 0}
+            order_batches[order][0] = {'vid': 0, 'cid': int(order), 'weight': 0, 'weightedProfit': 0}
             for batch in batches:
                 if int(batch_order[batch][order].get(self.weight)) < int(batches[batch].get(self.weightLimit)) and int(
                         batch_order[batch][order].get(self.weight)) != 0:
-                    profit_weight = float(orders[order].get(self.value)) / float(
-                        batch_order[batch][order].get(self.weight))
+                    profit_weight = orders[order].get(self.value) / batch_order[batch][order].get(self.weight)
                     order_batches[order][batch] = batch_order[batch][order]
                     order_batches[order][batch][self.weightedProfit] = profit_weight
+                    order_batches[order][batch][self.value] = orders[order].get(self.value)
 
         for order_batch in order_batches:
             temp_dat = sorted(order_batches[order_batch].values(), key=
@@ -65,10 +65,12 @@ class UberParentGA:
         return tmp1
 
     def initiate_population(self) -> dict:
+        test_int = np.random.randint(0, 1)
         order_batch_matrix1 = deepcopy(self.order_batch_matrix)
         for obm in order_batch_matrix1:
-            tmp2 = random.choice(order_batch_matrix1[obm])
-            order_batch_matrix1[obm] = tmp2
+            if test_int == 1:
+                order_batch_matrix1[obm] = {'vid': 0, 'cid': int(obm), 'weight': 0, 'weightedProfit': 0}
+
         return self.shuffle_order(order_batch_matrix1)
 
     def hash_item(self, item: dict) -> int:
@@ -87,19 +89,19 @@ class UberParentGA:
 
     def access_fitness_and_return_uber_parent(self, pops: dict) -> dict:
         set_batches = deepcopy(self.batch_matrix)
-        print(set_batches)
         set_orders = deepcopy(self.order_matrix)
         profit = 0
         for order in pops:
-            if order != 0:
+            if int(order) != 0 and int(pops[order].get(self.con_id)) != 0:
                 cid = pops[order].get(self.con_id)
-                batch_weight = set_batches[cid].get(self.weightLimit)
+                batch_weight = set_batches[str(cid)].get(self.weightLimit)
                 order_weight = pops[order].get(self.weight)
+                print(set_batches)
                 if batch_weight > order_weight:
                     profit += set_orders[order].get(self.value)
-                    batch_weight_int = batch_weight
-                    batch_weight_int -= order_weight
-                    set_batches[cid][self.weightLimit] = batch_weight_int
+                    batch_weight -= order_weight
+                    set_batches[str(cid)][self.weightLimit] = batch_weight
+                    print(set_batches)
                 elif batch_weight < order_weight:
                     pops[order] = {}
         return {'profit': profit, 'uberPop': pops}
@@ -110,10 +112,9 @@ class UberParentGA:
         for population in populations:
             temp_pop = self.access_fitness_and_return_uber_parent(population)
             uberPop[temp_pop['profit']] = temp_pop['uberPop']
-        print(uberPop)
         return uberPop
 
 
 ssclass = UberParentGA()
 test = ssclass.start()
-print(test)
+pprint.pprint(test)
